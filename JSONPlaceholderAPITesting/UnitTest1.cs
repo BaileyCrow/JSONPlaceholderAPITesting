@@ -54,6 +54,44 @@ namespace JSONPlaceholderAPITesting
     }
     public class SinglePostTest
     {
-        public async void 
+        /*public class PostObj
+        {
+           public int userId { get; set; }
+           public int id { get; set; }
+           public string title { get; set; }
+           public string body { get; set; }
+        };*/
+
+        public record PostObj(int userId, int id, string title, string body);
+
+        [Fact]
+        public async void SinglePost_WhenPostIsReturned_ContainsCorrectProperties()
+        {
+            var client = new RestClient("https://jsonplaceholder.typicode.com");
+            var request = new RestRequest("posts/1", Method.Get);
+            var response = await client.ExecuteAsync(request);
+
+            var data = JsonSerializer.Deserialize<PostObj>(response.Content!);
+            /*var expected = new PostObj
+            {
+              userId = 1,
+              id = 2,
+              title = "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+              body = "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+            };*/
+            var expected = new PostObj
+            (
+              1,
+              1,
+              "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+              "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+            );
+
+            /*Assert.Equal(expected.userId, data.userId);
+            Assert.Equal(expected.id, data.id);
+            Assert.Equal(expected.title, data.title);
+            Assert.Equal(expected.body, data.body);*/
+            Assert.Equal(expected, data);
+        }
     }
 }
